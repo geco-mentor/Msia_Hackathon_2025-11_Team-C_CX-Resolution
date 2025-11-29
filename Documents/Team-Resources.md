@@ -10,6 +10,16 @@
 
 - **Amir (WhatsApp)**: `+60197006927`
 
+### Technical Leads
+
+- **Gareth**
+- **Kyay Mon**
+- **Kenneth**
+
+### Coaches
+
+- **Daniel / Angeline**
+
 ### Links
 
 - **GitHub Repo**: [Let-It-Fly](https://github.com/nikiwit/Let-It-Fly)
