@@ -38,6 +38,7 @@ class ChatService {
       body: jsonEncode({
         "message": userMessage,
         "phone_number": phoneNumber,
+        "channel": "mobile",  // Mobile app - skip PIN verification
       }),
     );
 

@@ -1,0 +1,7 @@
+# Python dependencies for helper scripts
+
+# AWS SDK
+boto3>=1.34.0
+
+# Data processing
+scikit-learn>=1.3.0  # For F1 score calculation in evaluate_intent_f1.py

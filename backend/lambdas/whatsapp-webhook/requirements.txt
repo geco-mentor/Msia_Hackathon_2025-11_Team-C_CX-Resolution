@@ -1,0 +1,8 @@
+# API Handler Lambda Dependencies
+
+# AWS SDKs
+boto3>=1.34.0
+botocore>=1.34.0
+
+# X-Ray tracing
+aws-xray-sdk>=2.12.0

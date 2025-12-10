@@ -154,3 +154,32 @@ Thumbs.db
 # Project specific
 audit_logs/
 *.log
+
+# Knowledge base articles (uploaded separately to S3)
+kb_articles_converted/
+Data/kb_articles.json
+
+# Environment and config files
+.env.lambda
+.env.*
+.s3_bucket_name
+*.env
+
+# Build artifacts
+*.zip
+*.backup/
+src.backup/
+
+# Android local properties
+local.properties
+
+# Customer data (sensitive)
+Data/customer_data.json
+Data/audit_logs.json
+
+# AWS configuration / credentials
+data.txt
+
+# Generated test results
+test_metrics.json
+test_results.csv
