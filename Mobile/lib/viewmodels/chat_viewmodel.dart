@@ -39,7 +39,7 @@ class ChatViewModel extends ChangeNotifier {
 
   List<ChatMessage> messages = [];
   bool isLoading = false;
-  String phoneNumber = "+60123456789";
+  String phoneNumber = "+60132211009";
 
   // STATIC PLANS (since not coming from API)
   List<Map<String, String>> prepaidPlans = [
