@@ -46,7 +46,17 @@ import re
 import uuid
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
-from aws_xray_sdk.core import xray_recorder
+
+# Make X-Ray optional (not available in all Lambda environments)
+try:
+    from aws_xray_sdk.core import xray_recorder
+except ImportError:
+    class DummyRecorder:
+        def capture(self, name):
+            def decorator(func):
+                return func
+            return decorator
+    xray_recorder = DummyRecorder()
 
 # Initialize AWS clients
 dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('REGION', 'ap-southeast-1'))
@@ -212,6 +222,13 @@ def create_or_resume_session(phone_number: str, message: str, session_id: Option
                         print(f"[OK] Resuming session: {session_id}")
 
                         new_turn = int(session.get('turn_number', 0)) + 1
+                        
+                        # CRITICAL: Preserve session state for multi-turn flows (PIN verification)
+                        awaiting_action = session.get('awaiting_action')
+                        pending_intent = session.get('pending_intent')
+                        session_state = session.get('session_state', 'active')
+                        
+                        print(f"[DEBUG] Preserving session state: awaiting={awaiting_action}, intent={pending_intent}")
 
                         sessions_table.put_item(Item={
                             'session_id': session_id,
@@ -221,6 +238,9 @@ def create_or_resume_session(phone_number: str, message: str, session_id: Option
                             'user_message': message,
                             'channel': channel,
                             'customer_verified': customer_verified,
+                            'session_state': session_state,
+                            'awaiting_action': awaiting_action,  # Preserve for PIN flow
+                            'pending_intent': pending_intent,    # Preserve intent being verified
                             'created_at': session.get('created_at', datetime.utcnow().isoformat()),
                             'updated_at': datetime.utcnow().isoformat(),
                             'ttl': int((datetime.utcnow() + timedelta(hours=SESSION_TTL_HOURS)).timestamp())

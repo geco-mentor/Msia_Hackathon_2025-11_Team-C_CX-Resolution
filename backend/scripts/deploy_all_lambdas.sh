@@ -27,23 +27,29 @@ ROLE_NAME="ChatbotLambdaExecutionRole"
 RUNTIME="python3.12"
 
 # Per-Lambda memory and timeout configurations (optimized for P95 < 2.5s)
-declare -A LAMBDA_MEMORY=(
-    ["crm-mock"]=256
-    ["guardrails"]=512
-    ["nlu-engine"]=1024
-    ["orchestrator"]=1536
-    ["whatsapp-webhook"]=1024
-    ["twilio-webhook"]=1024
-)
+get_lambda_memory() {
+    case "$1" in
+        crm-mock) echo 256 ;;
+        guardrails) echo 512 ;;
+        nlu-engine) echo 1024 ;;
+        orchestrator) echo 1536 ;;
+        whatsapp-webhook) echo 1024 ;;
+        twilio-webhook) echo 1024 ;;
+        *) echo 512 ;;
+    esac
+}
 
-declare -A LAMBDA_TIMEOUT=(
-    ["crm-mock"]=10
-    ["guardrails"]=10
-    ["nlu-engine"]=15
-    ["orchestrator"]=30
-    ["whatsapp-webhook"]=30
-    ["twilio-webhook"]=30
-)
+get_lambda_timeout() {
+    case "$1" in
+        crm-mock) echo 10 ;;
+        guardrails) echo 10 ;;
+        nlu-engine) echo 15 ;;
+        orchestrator) echo 30 ;;
+        whatsapp-webhook) echo 30 ;;
+        twilio-webhook) echo 30 ;;
+        *) echo 30 ;;
+    esac
+}
 
 # Color output
 RED='\033[0;31m'
@@ -172,8 +178,10 @@ deploy_lambda() {
     local FUNCTION_NAME="chatbot-${LAMBDA_NAME}"
     
     # Get per-Lambda memory and timeout (with defaults)
-    local MEMORY=${LAMBDA_MEMORY[$LAMBDA_NAME]:-512}
-    local TIMEOUT=${LAMBDA_TIMEOUT[$LAMBDA_NAME]:-30}
+    local MEMORY
+    local TIMEOUT
+    MEMORY=$(get_lambda_memory "$LAMBDA_NAME")
+    TIMEOUT=$(get_lambda_timeout "$LAMBDA_NAME")
 
     # Get IAM role ARN
     ROLE_ARN=$(aws iam get-role --role-name $ROLE_NAME --query 'Role.Arn' --output text)

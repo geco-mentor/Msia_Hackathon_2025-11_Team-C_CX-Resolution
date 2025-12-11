@@ -4,7 +4,7 @@ Orchestrator Lambda Function - Main Coordination Logic
 REFACTORED to use AWS Best Practices:
 - Bedrock Prompt Management (no hardcoded prompts)
 - Bedrock Guardrails with Automated Reasoning (hallucination prevention)
-- Claude 3 Haiku for response generation (fast, cost-effective)
+- Amazon Nova Pro for response generation
 - PII redaction built-in
 - Production-grade error handling
 
@@ -13,7 +13,7 @@ Environment Variables:
     GUARDRAILS_LAMBDA_ARN: ARN of guardrails Lambda
     CRM_LAMBDA_ARN: ARN of CRM mock Lambda
     BEDROCK_KB_ID: Bedrock Knowledge Base ID
-    BEDROCK_MODEL_HAIKU: Haiku model ID (default: anthropic.claude-3-haiku-20240307-v1:0)
+    BEDROCK_MODEL_NOVA_PRO: Nova Pro inference profile/model ID (default: apac.amazon.nova-pro-v1:0)
     BEDROCK_GUARDRAIL_ID: Guardrail identifier
     BEDROCK_GUARDRAIL_VERSION: Guardrail version
     RESPONSE_PROMPT_ID: Prompt Management ARN for response generation
@@ -44,17 +44,24 @@ except ImportError:
             return decorator
     xray_recorder = DummyRecorder()
 
+# Configure retry logic for throttling protection (Bedrock, KB)
+bedrock_config = Config(
+    retries={
+        'max_attempts': 6,
+        'mode': 'adaptive'
+    },
+    connect_timeout=10,
+    read_timeout=60,
+    max_pool_connections=20
+)
+
 # Initialize AWS clients
 dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('REGION', 'ap-southeast-1'))
 lambda_client = boto3.client('lambda', region_name=os.environ.get('REGION', 'ap-southeast-1'))
-bedrock_runtime = boto3.client('bedrock-runtime', region_name=os.environ.get('REGION', 'ap-southeast-1'))
-
-# Configure retry logic for throttling protection
-bedrock_config = Config(
-    retries={
-        'max_attempts': 3,
-        'mode': 'adaptive'
-    }
+bedrock_runtime = boto3.client(
+    'bedrock-runtime',
+    region_name=os.environ.get('REGION', 'ap-southeast-1'),
+    config=bedrock_config
 )
 bedrock_agent = boto3.client(
     'bedrock-agent-runtime',
@@ -68,7 +75,12 @@ NLU_LAMBDA = os.environ.get('NLU_LAMBDA_ARN')
 GUARDRAILS_LAMBDA = os.environ.get('GUARDRAILS_LAMBDA_ARN')
 CRM_LAMBDA = os.environ.get('CRM_LAMBDA_ARN')
 BEDROCK_KB_ID = os.environ.get('BEDROCK_KB_ID')
-BEDROCK_HAIKU = os.environ.get('BEDROCK_MODEL_HAIKU', 'anthropic.claude-3-haiku-20240307-v1:0')
+BEDROCK_MODEL = (
+    os.environ.get('BEDROCK_MODEL_NOVA_PRO')
+    or os.environ.get('BEDROCK_MODEL_HAIKU')
+    or os.environ.get('BEDROCK_MODEL')
+    or 'apac.amazon.nova-pro-v1:0'
+)
 GUARDRAIL_ID = os.environ.get('BEDROCK_GUARDRAIL_ID')
 GUARDRAIL_VERSION = os.environ.get('BEDROCK_GUARDRAIL_VERSION', 'DRAFT')
 RESPONSE_PROMPT_ID = os.environ.get('RESPONSE_PROMPT_ID')  # Prompt Management ARN
@@ -162,6 +174,50 @@ def update_session_state(session_id: str, awaiting_action: str = None, pending_i
         print(f"[ERROR] Error updating session state: {e}")
         # Re-raise to ensure caller knows the update failed
         raise
+
+
+def clean_markdown_formatting(text: str) -> str:
+    """
+    Clean up Markdown formatting for universal compatibility.
+    
+    Converts Markdown to clean plain text that displays well on:
+    - WhatsApp (which uses different formatting syntax)
+    - Flutter web/mobile (which doesn't render Markdown by default)
+    - Any other channel
+    
+    Preserves structure (bullet points, numbered lists) but removes
+    Markdown syntax like **bold**, *italic*, etc.
+    """
+    import re
+    
+    if not text:
+        return text
+    
+    # Remove **bold** markers (keep the text)
+    text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)
+    
+    # Remove *italic* markers (keep the text)  
+    text = re.sub(r'\*([^*]+)\*', r'\1', text)
+    
+    # Remove __bold__ markers
+    text = re.sub(r'__([^_]+)__', r'\1', text)
+    
+    # Remove _italic_ markers
+    text = re.sub(r'_([^_]+)_', r'\1', text)
+    
+    # Remove `code` markers
+    text = re.sub(r'`([^`]+)`', r'\1', text)
+    
+    # Remove ### headers but keep text
+    text = re.sub(r'^#{1,6}\s*', '', text, flags=re.MULTILINE)
+    
+    # Convert markdown links [text](url) to just text
+    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
+    
+    # Clean up extra whitespace
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    
+    return text.strip()
 
 
 def normalize_phone_number(phone: str) -> str:
@@ -349,7 +405,7 @@ def retrieve_from_kb(query: str, language: str = "EN") -> Dict[str, Any]:
             'type': 'KNOWLEDGE_BASE',
             'knowledgeBaseConfiguration': {
                 'knowledgeBaseId': BEDROCK_KB_ID,
-                'modelArn': BEDROCK_HAIKU,  # Use model ID directly (not ARN format)
+                'modelArn': BEDROCK_MODEL,  # Use Nova Pro inference profile/model ID
                 'retrievalConfiguration': {
                     'vectorSearchConfiguration': {
                         'numberOfResults': 3
@@ -404,6 +460,33 @@ def retrieve_from_kb(query: str, language: str = "EN") -> Dict[str, Any]:
 
         generated_text = response['output']['text']
         citations = response.get('citations', [])
+        
+        # Clean up KB response - remove unwanted preambles that sound robotic
+        unwanted_preambles = [
+            "Based on the retrieved results, ",
+            "Based on retrieved results, ",
+            "Based on the information provided, ",
+            "Based on information provided, ",
+            "According to the retrieved information, ",
+            "According to the information, ",
+            "The retrieved results indicate that ",
+            "From the retrieved information, ",
+            "Based on the context provided, ",
+            "Berdasarkan maklumat yang diperoleh, ",
+            "Berdasarkan keputusan yang diperoleh, ",
+        ]
+        
+        for preamble in unwanted_preambles:
+            if generated_text.lower().startswith(preamble.lower()):
+                # Remove the preamble and capitalize the first letter
+                generated_text = generated_text[len(preamble):]
+                if generated_text:
+                    generated_text = generated_text[0].upper() + generated_text[1:]
+                break
+        
+        # Clean up Markdown formatting for universal compatibility
+        # (WhatsApp, Flutter web/mobile all display plain text better)
+        generated_text = clean_markdown_formatting(generated_text)
 
         # Extract source article IDs
         source_ids = []
@@ -440,37 +523,116 @@ def retrieve_from_kb(query: str, language: str = "EN") -> Dict[str, Any]:
         }
 
 
+@xray_recorder.capture("get_translation_prompt")
+def get_translation_prompt(text: str, target_language: str = "Bahasa Malaysia") -> Dict[str, Any]:
+    """
+    Get translation prompt from Bedrock Prompt Management.
+    
+    Requires TRANSLATION_PROMPT_ID to be configured.
+    """
+    if not TRANSLATION_PROMPT_ID:
+        print("[ERROR] TRANSLATION_PROMPT_ID not set - Bedrock Prompt Management is required")
+        raise ValueError("TRANSLATION_PROMPT_ID environment variable must be set")
+    
+    try:
+        response = bedrock_agent_mgmt.get_prompt(
+            promptIdentifier=TRANSLATION_PROMPT_ID
+        )
+        
+        variant = response.get('variants', [{}])[0]
+        chat_config = variant.get('templateConfiguration', {}).get('chat', {})
+        
+        # Extract system prompt
+        system_list = chat_config.get('system', [])
+        system_prompt = extract_text_value(system_list[0]) if system_list else ''
+        
+        # Extract user message template
+        messages = chat_config.get('messages', [])
+        user_template = ''
+        if messages and messages[0].get('content'):
+            user_template = extract_text_value(messages[0]['content'][0])
+        
+        # Replace variables
+        system_prompt = system_prompt.replace('{{target_language}}', target_language)
+        user_message = user_template.replace('{{target_language}}', target_language)
+        user_message = user_message.replace('{{text}}', text)
+        
+        return {
+            "system": system_prompt,
+            "user_message": user_message
+        }
+        
+    except Exception as e:
+        print(f"[ERROR] Error getting translation prompt from Bedrock Prompt Management: {e}")
+        raise RuntimeError(f"Failed to get translation prompt: {e}")
+
+
 @xray_recorder.capture("translate_to_bahasa")
 def translate_to_bahasa(text: str) -> Optional[str]:
-    """Translate English text to Bahasa Malaysia using Bedrock Haiku (fast)."""
+    """Translate English text to Bahasa Malaysia using Bedrock Prompt Management."""
     try:
-        request_body = {
-            "anthropic_version": "bedrock-2023-05-31",
-            "max_tokens": 1000,
-            "temperature": 0.3,
-            "messages": [{
-                "role": "user",
-                "content": f"Translate this English text to Bahasa Malaysia. Maintain the same tone:\n\n{text}"
-            }]
+        # Get prompt from Prompt Management
+        prompt = get_translation_prompt(text, "Bahasa Malaysia")
+        
+        system_messages = [{"text": prompt["system"]}]
+        
+        messages = [{
+            "role": "user",
+            "content": [{"text": prompt["user_message"]}]
+        }]
+
+        converse_args = {
+            "modelId": BEDROCK_MODEL,
+            "system": system_messages,
+            "messages": messages,
+            "inferenceConfig": {
+                "maxTokens": 1000,
+                "temperature": 0.3,
+            }
         }
 
-        invoke_params = {
-            'modelId': BEDROCK_HAIKU,
-            'body': json.dumps(request_body)
-        }
-
-        # Add guardrails if configured
         if GUARDRAIL_ID:
-            invoke_params['guardrailIdentifier'] = GUARDRAIL_ID
-            invoke_params['guardrailVersion'] = GUARDRAIL_VERSION
+            converse_args["guardrailConfig"] = {
+                "guardrailIdentifier": GUARDRAIL_ID,
+                "guardrailVersion": GUARDRAIL_VERSION
+            }
 
-        response = bedrock_runtime.invoke_model(**invoke_params)
-        result = json.loads(response['body'].read())
-        return result['content'][0]['text'].strip()
+        response = bedrock_runtime.converse(**converse_args)
+        content = response.get("output", {}).get("message", {}).get("content", [])
+        if content and "text" in content[0]:
+            return content[0]["text"].strip()
+        return None
 
     except Exception as e:
         print(f"[WARN] Translation error: {e}")
         return None
+
+
+def extract_text_value(text_content) -> str:
+    """
+    Extract string from Prompt Management text content.
+    
+    Handles both formats:
+    - Direct string: "text here"
+    - Dict format: {'format': 'plain_text', 'text': 'text here'}
+    - Nested dict: {'text': {'format': 'plain_text', 'text': 'text here'}}
+    
+    Args:
+        text_content: Text content from Prompt Management API
+        
+    Returns:
+        Extracted string value
+    """
+    if isinstance(text_content, str):
+        return text_content
+    if isinstance(text_content, dict):
+        # Check for nested 'text' field that might be a dict
+        text_value = text_content.get('text', '')
+        if isinstance(text_value, dict):
+            # Handle {'text': {'format': 'plain_text', 'text': 'actual text'}}
+            return text_value.get('text', '')
+        return text_value if isinstance(text_value, str) else ''
+    return ''
 
 
 @xray_recorder.capture("get_response_prompt")
@@ -481,27 +643,8 @@ def get_response_prompt(intent: str, context: Dict[str, Any], language: str) -> 
     Falls back to inline prompt if Prompt Management not configured.
     """
     if not RESPONSE_PROMPT_ID:
-        print("[WARN] RESPONSE_PROMPT_ID not set, using fallback inline prompt")
-        # Fallback inline prompt
-        return {
-            "system": f"""You are a helpful Malaysian telecom customer service assistant for CelcomDigi.
-
-Language: Respond in {('English' if language == 'EN' else 'Bahasa Malaysia')}.
-
-Guidelines:
-- Be concise and friendly (1-2 sentences max)
-- If asking for PIN, ask for 4-digit security PIN (not 6-digit)
-- If asking for phone number, ask for CelcomDigi registered phone number
-- If action succeeded, confirm clearly
-- NEVER invent information not in context
-- Use WhatsApp-style brevity""",
-            "user_message": f"""Intent: {intent}
-
-Context:
-{json.dumps(context, indent=2)}
-
-Generate an appropriate customer service response."""
-        }
+        print("[ERROR] RESPONSE_PROMPT_ID not set - Bedrock Prompt Management is required")
+        raise ValueError("RESPONSE_PROMPT_ID environment variable must be set")
 
     try:
         # Get prompt from Prompt Management
@@ -516,15 +659,15 @@ Generate an appropriate customer service response."""
         
         chat_config = variants[0].get('templateConfiguration', {}).get('chat', {})
         
-        # Extract system prompt
+        # Extract system prompt - use extract_text_value to handle dict format
         system_list = chat_config.get('system', [])
-        system_prompt = system_list[0].get('text', '') if system_list else ''
+        system_prompt = extract_text_value(system_list[0]) if system_list else ''
         
-        # Extract user message template
+        # Extract user message template - use extract_text_value to handle dict format
         messages = chat_config.get('messages', [])
         user_template = ''
         if messages and messages[0].get('content'):
-            user_template = messages[0]['content'][0].get('text', '')
+            user_template = extract_text_value(messages[0]['content'][0])
 
         # Replace variables
         system_prompt = system_prompt.replace('{{intent}}', intent)
@@ -541,77 +684,65 @@ Generate an appropriate customer service response."""
         }
 
     except Exception as e:
-        print(f"[WARN] Error getting prompt from Prompt Management: {e}")
-        # Fallback inline prompt
-        return {
-            "system": f"""You are a helpful Malaysian telecom customer service assistant for CelcomDigi.
-
-Language: Respond in {('English' if language == 'EN' else 'Bahasa Malaysia')}.
-
-Guidelines:
-- Be concise and friendly (1-2 sentences max)
-- If asking for PIN, ask for 4-digit security PIN (not 6-digit)
-- If asking for phone number, ask for CelcomDigi registered phone number
-- If action succeeded, confirm clearly
-- NEVER invent information not in context
-- Use WhatsApp-style brevity""",
-            "user_message": f"""Intent: {intent}
-
-Context:
-{json.dumps(context, indent=2)}
-
-Generate an appropriate customer service response."""
-        }
+        print(f"[ERROR] Error getting response prompt from Bedrock Prompt Management: {e}")
+        raise RuntimeError(f"Failed to get response prompt: {e}")
 
 
 @xray_recorder.capture("generate_response")
 def generate_response(intent: str, context: Dict[str, Any], language: str = "EN") -> str:
     """
-    Generate natural language response using Bedrock Haiku with Guardrails.
+    Generate natural language response using Bedrock Nova Pro with Guardrails.
 
     Uses:
     - Prompt Management (no hardcoded prompts)
     - Bedrock Guardrails (PII redaction, content filtering)
     - Automated Reasoning (hallucination prevention)
-    - Claude 3 Haiku (fast, cost-effective)
+    - Amazon Nova Pro (fast, safety-enabled)
     """
     # Get prompt from Prompt Management
     prompt = get_response_prompt(intent, context, language)
 
     try:
-        request_body = {
-            "anthropic_version": "bedrock-2023-05-31",
-            "max_tokens": 500,
-            "temperature": 0.7,
-            "system": prompt["system"],
-            "messages": [
-                {"role": "user", "content": prompt["user_message"]}
-            ]
+        system_messages = [
+            {"text": prompt["system"]}
+        ]
+
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "text": prompt["user_message"]
+                    }
+                ]
+            }
+        ]
+
+        converse_args = {
+            "modelId": BEDROCK_MODEL,
+            "system": system_messages,
+            "messages": messages,
+            "inferenceConfig": {
+                "maxTokens": 500,
+                "temperature": 0.7,
+            }
         }
 
-        invoke_params = {
-            'modelId': BEDROCK_HAIKU,  # Use Haiku 3 for response generation
-            'body': json.dumps(request_body)
-        }
-
-        # Add Guardrails with Automated Reasoning
         if GUARDRAIL_ID:
-            invoke_params['guardrailIdentifier'] = GUARDRAIL_ID
-            invoke_params['guardrailVersion'] = GUARDRAIL_VERSION
+            converse_args["guardrailConfig"] = {
+                "guardrailIdentifier": GUARDRAIL_ID,
+                "guardrailVersion": GUARDRAIL_VERSION
+            }
 
-        response = bedrock_runtime.invoke_model(**invoke_params)
+        response = bedrock_runtime.converse(**converse_args)
+        content = response.get("output", {}).get("message", {}).get("content", [])
 
-        result = json.loads(response['body'].read())
+        # Bedrock Converse returns content as [{"text": "response"}] without a type field
+        if content and "text" in content[0]:
+            return content[0].get("text", "").strip()
 
-        # Check for guardrail intervention
-        if 'trace' in result and result.get('trace', {}).get('guardrail'):
-            guardrail_trace = result['trace']['guardrail']
-            if guardrail_trace.get('action') == 'GUARDRAIL_INTERVENED':
-                print(f"[BLOCKED] Guardrail intervened in response generation")
-                # Return safe fallback
-                return "I apologize, but I need to transfer you to a human agent for assistance."
-
-        return result['content'][0]['text'].strip()
+        print("[WARN] Empty content returned from Nova response")
+        return "I'm sorry, I encountered an error. Please try again or contact customer service."
 
     except Exception as e:
         print(f"[ERROR] Error generating response: {e}")
@@ -741,9 +872,49 @@ def handle_intent(intent: str, slots: Dict[str, Any], session_data: Dict[str, An
                 "requires_followup": False
             }
 
-    elif intent in ["query_voicemail_info", "query_voicemail_access"]:
+    elif intent in ["query_voicemail_info", "query_voicemail_access", 
+                     "query_plan_info", "query_sim_card", "query_billing",
+                     "query_data", "query_roaming", "query_network", "general_inquiry"]:
         # Knowledge base queries (RAG with Automated Reasoning)
+        # Covers voicemail info, plans, SIM cards, billing, data, roaming, network, etc.
         kb_result = retrieve_from_kb(session_data['message'], language)
+        
+        # Check if KB response is unhelpful (no grounding or contains "insufficient information" phrases)
+        unhelpful_phrases = [
+            "does not have sufficient information",
+            "could not find",
+            "no information available",
+            "tidak mempunyai maklumat",
+            "consult resources",
+            "tidak dapat mencari"
+        ]
+        
+        response_text = kb_result.get('response', '').lower()
+        is_unhelpful = (
+            not kb_result.get('grounded', False) or
+            len(kb_result.get('citations', [])) == 0 or
+            any(phrase in response_text for phrase in unhelpful_phrases)
+        )
+        
+        if is_unhelpful:
+            # Offer to escalate to human agent instead of returning unhelpful response
+            escalation_msg = (
+                "I don't have specific information about that topic in my knowledge base. "
+                "Would you like me to connect you with a customer service agent who can help you further? "
+                "You can also call our hotline at 100 for immediate assistance."
+            ) if language == "EN" else (
+                "Saya tidak mempunyai maklumat khusus mengenai topik itu dalam pangkalan pengetahuan saya. "
+                "Adakah anda mahu saya menghubungkan anda dengan ejen perkhidmatan pelanggan yang boleh membantu anda dengan lebih lanjut? "
+                "Anda juga boleh menghubungi talian hotline kami di 100 untuk bantuan segera."
+            )
+            return {
+                "response": escalation_msg,
+                "grounded": False,
+                "citations": [],
+                "requires_followup": True,
+                "escalate_suggestion": True
+            }
+        
         return {
             "response": kb_result['response'],
             "grounded": kb_result['grounded'],
@@ -767,10 +938,17 @@ def handle_intent(intent: str, slots: Dict[str, Any], session_data: Dict[str, An
             }
 
     elif intent == "greeting":
+        # Generate greeting response with fallback
+        greeting_response = generate_response(intent, {
+            "message": "Customer greeted the bot"
+        }, language)
+        
+        # Fallback if response generation fails
+        if not greeting_response or greeting_response.strip() == "":
+            greeting_response = "Hello! Thank you for reaching out to CelcomDigi. How can I assist you today?" if language == "EN" else "Hai! Terima kasih kerana menghubungi CelcomDigi. Bagaimana saya boleh membantu anda hari ini?"
+        
         return {
-            "response": generate_response(intent, {
-                "message": "Customer greeted the bot"
-            }, language),
+            "response": greeting_response,
             "grounded": False,
             "citations": [],
             "requires_followup": False
@@ -824,7 +1002,7 @@ def log_audit(session_data: Dict[str, Any], nlu_result: Dict[str, Any], response
             'extracted_slots': nlu_result.get('slots', {}),
             'user_message': session_data['message'],
             'bot_response': response_data.get('response'),
-            'model_version': BEDROCK_HAIKU,
+            'model_version': BEDROCK_MODEL,
             'grounding_sources': response_data.get('citations', []),
             'api_calls': response_data.get('api_calls', []),
             'error_details': response_data.get('error'),
@@ -849,7 +1027,7 @@ def handler(event, context):
     Uses:
     - Bedrock Prompt Management (no hardcoded prompts)
     - Bedrock Guardrails (PII, content filtering, automated reasoning)
-    - Claude 3 Haiku (fast, cost-effective)
+    - Amazon Nova Pro (fast, safety-enabled)
     - Session state tracking for multi-turn conversations
     """
     start_time = datetime.utcnow()
@@ -906,6 +1084,11 @@ def handler(event, context):
 
         # Handle intent (orchestrate guardrails, CRM, KB)
         response_data = handle_intent(intent, slots, session_data)
+        
+        # Add intent and confidence to response for metadata tracking
+        response_data['intent'] = intent
+        response_data['confidence'] = confidence
+        response_data['language'] = slots.get('language_preference', 'EN')
         
         # If response indicates we're waiting for something, update session state
         if response_data.get('awaiting') == 'security_pin':

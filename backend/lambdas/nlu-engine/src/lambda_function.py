@@ -4,11 +4,11 @@ NLU Engine Lambda Function - Intent Detection & Slot Extraction
 REFACTORED to use AWS Best Practices:
 - Bedrock Prompt Management (no hardcoded prompts)
 - Bedrock Guardrails (native safety)
-- Claude 3 Haiku (fast, cost-effective)
+- Amazon Nova Pro (primary model)
 - Proper error handling
 
 Environment Variables:
-    BEDROCK_MODEL: Bedrock model ID (default: anthropic.claude-3-haiku-20240307-v1:0)
+    BEDROCK_MODEL_NOVA_PRO or BEDROCK_MODEL: Bedrock model ID (default: apac.amazon.nova-pro-v1:0)
     BEDROCK_GUARDRAIL_ID: Guardrail identifier
     BEDROCK_GUARDRAIL_VERSION: Guardrail version (default: DRAFT)
     NLU_PROMPT_ID: Prompt Management ARN for intent classification
@@ -45,10 +45,10 @@ from typing import Dict, Any, Optional
 
 # Initialize AWS clients with retry and timeout config
 bedrock_config = Config(
-    retries={'max_attempts': 3, 'mode': 'adaptive'},
+    retries={'max_attempts': 6, 'mode': 'adaptive'},
     connect_timeout=10,
-    read_timeout=30,
-    max_pool_connections=10
+    read_timeout=60,
+    max_pool_connections=20
 )
 
 bedrock_runtime = boto3.client(
@@ -68,7 +68,12 @@ s3_client = boto3.client('s3', region_name=os.environ.get('REGION', 'ap-southeas
 SLANG_DICT = None
 
 # Configuration
-BEDROCK_MODEL = os.environ.get('BEDROCK_MODEL', 'anthropic.claude-3-haiku-20240307-v1:0')
+BEDROCK_MODEL = (
+    os.environ.get('BEDROCK_MODEL_NOVA_PRO')
+    or os.environ.get('BEDROCK_MODEL')
+    or os.environ.get('BEDROCK_MODEL_HAIKU')
+    or 'apac.amazon.nova-pro-v1:0'
+)
 GUARDRAIL_ID = os.environ.get('BEDROCK_GUARDRAIL_ID')
 GUARDRAIL_VERSION = os.environ.get('BEDROCK_GUARDRAIL_VERSION', 'DRAFT')
 NLU_PROMPT_ID = os.environ.get('NLU_PROMPT_ID')  # Prompt Management ARN
@@ -227,6 +232,33 @@ def normalize_slang(message: str) -> str:
     return ' '.join(normalized_tokens)
 
 
+def extract_text_value(text_content) -> str:
+    """
+    Extract string from Prompt Management text content.
+    
+    Handles both formats:
+    - Direct string: "text here"
+    - Dict format: {'format': 'plain_text', 'text': 'text here'}
+    - Nested dict: {'text': {'format': 'plain_text', 'text': 'text here'}}
+    
+    Args:
+        text_content: Text content from Prompt Management API
+        
+    Returns:
+        Extracted string value
+    """
+    if isinstance(text_content, str):
+        return text_content
+    if isinstance(text_content, dict):
+        # Check for nested 'text' field that might be a dict
+        text_value = text_content.get('text', '')
+        if isinstance(text_value, dict):
+            # Handle {'text': {'format': 'plain_text', 'text': 'actual text'}}
+            return text_value.get('text', '')
+        return text_value if isinstance(text_value, str) else ''
+    return ''
+
+
 # @xray_recorder.capture("get_nlu_prompt")  # Removed - not needed
 def get_nlu_prompt(message: str, normalized_message: str) -> Dict[str, Any]:
     """
@@ -240,37 +272,8 @@ def get_nlu_prompt(message: str, normalized_message: str) -> Dict[str, Any]:
         Prompt with variables substituted
     """
     if not NLU_PROMPT_ID:
-        print("[WARN] NLU_PROMPT_ID not set, using fallback inline prompt")
-        # Fallback to inline prompt if Prompt Management not configured yet
-        return {
-            "system": """You are an intent classifier for a Malaysian telecom chatbot.
-
-Classify user messages into ONE of these intents:
-1. deactivate_voicemail - Turn OFF voicemail
-2. activate_voicemail - Turn ON voicemail
-3. query_voicemail_info - General questions (what, how, cost)
-4. check_voicemail_status - Check if active/inactive
-5. query_voicemail_access - How to access voicemail
-6. greeting - User greets bot
-7. out_of_scope - Unrelated to voicemail
-8. escalate_to_agent - Request human agent
-9. abusive_language - Profanity/inappropriate
-10. unclear_intent - Cannot determine with confidence
-
-Extract slots: phone_number (+60XXXXXXXXX), security_pin (4-digit), language_preference (EN/BM)
-
-Respond in JSON:
-{
-  "intent": "intent_name",
-  "confidence": 0.0-1.0,
-  "slots": {"phone_number": null, "security_pin": null, "language_preference": "EN"},
-  "reasoning": "brief explanation"
-}""",
-            "user_message": f"""Original: {message}
-Normalized: {normalized_message}
-
-Classify this message and extract slots."""
-        }
+        print("[ERROR] NLU_PROMPT_ID not set - Bedrock Prompt Management is required")
+        raise ValueError("NLU_PROMPT_ID environment variable must be set to use Bedrock Prompt Management")
 
     try:
         # Get prompt from Prompt Management
@@ -283,15 +286,15 @@ Classify this message and extract slots."""
         variant = response.get('variants', [{}])[0]
         template_config = variant.get('templateConfiguration', {}).get('chat', {})
 
-        # Get system prompt
+        # Get system prompt - use extract_text_value to handle dict format
         system_messages = template_config.get('system', [])
-        system_prompt = system_messages[0].get('text', '') if system_messages else ''
+        system_prompt = extract_text_value(system_messages[0]) if system_messages else ''
 
-        # Get user message template
+        # Get user message template - use extract_text_value to handle dict format
         user_messages = template_config.get('messages', [])
         if user_messages:
             content = user_messages[0].get('content', [])
-            user_template = content[0].get('text', '') if content else ''
+            user_template = extract_text_value(content[0]) if content else ''
         else:
             user_template = ''
 
@@ -305,39 +308,11 @@ Classify this message and extract slots."""
         }
 
     except Exception as e:
-        print(f"[WARN] Error getting prompt from Prompt Management: {e}")
+        print(f"[ERROR] Error getting prompt from Bedrock Prompt Management: {e}")
         import traceback
         traceback.print_exc()
-        # Fallback to inline prompt
-        return {
-            "system": """You are an intent classifier for a Malaysian telecom chatbot.
-
-Classify user messages into ONE of these intents:
-1. deactivate_voicemail - Turn OFF voicemail
-2. activate_voicemail - Turn ON voicemail
-3. query_voicemail_info - General questions (what, how, cost)
-4. check_voicemail_status - Check if active/inactive
-5. query_voicemail_access - How to access voicemail
-6. greeting - User greets bot
-7. out_of_scope - Unrelated to voicemail
-8. escalate_to_agent - Request human agent
-9. abusive_language - Profanity/inappropriate
-10. unclear_intent - Cannot determine with confidence
-
-Extract slots: phone_number (+60XXXXXXXXX), security_pin (4-digit), language_preference (EN/BM)
-
-Respond in JSON:
-{
-  "intent": "intent_name",
-  "confidence": 0.0-1.0,
-  "slots": {"phone_number": null, "security_pin": null, "language_preference": "EN"},
-  "reasoning": "brief explanation"
-}""",
-            "user_message": f"""Original: {message}
-Normalized: {normalized_message}
-
-Classify this message and extract slots."""
-        }
+        # Re-raise to signal that Prompt Management is required
+        raise RuntimeError(f"Failed to get NLU prompt from Bedrock Prompt Management: {e}")
 
 
 # @xray_recorder.capture("detect_intent_bedrock")  # Removed - not needed
@@ -356,58 +331,52 @@ def detect_intent_via_bedrock(message: str, normalized_message: str) -> Dict[str
     prompt = get_nlu_prompt(message, normalized_message)
 
     try:
-        # Prepare request body
-        request_body = {
-            "anthropic_version": "bedrock-2023-05-31",
-            "max_tokens": 500,
-            "temperature": 0.1,  # Low temperature for consistent classification
-            "system": prompt["system"],
-            "messages": [
-                {"role": "user", "content": prompt["user_message"]}
-            ]
-        }
+        # Build messages for Nova conversation
+        system_messages = [
+            {"text": prompt["system"]}
+        ]
 
-        # Call Bedrock with Guardrails
-        invoke_params = {
-            'modelId': BEDROCK_MODEL,
-            'body': json.dumps(request_body)
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "text": prompt["user_message"]
+                    }
+                ]
+            }
+        ]
+
+        converse_args = {
+            "modelId": BEDROCK_MODEL,
+            "system": system_messages,
+            "messages": messages,
+            "inferenceConfig": {
+                "maxTokens": 500,
+                "temperature": 0.1
+            }
         }
 
         # Add guardrails if configured
         if GUARDRAIL_ID:
-            invoke_params['guardrailIdentifier'] = GUARDRAIL_ID
-            invoke_params['guardrailVersion'] = GUARDRAIL_VERSION
+            converse_args["guardrailConfig"] = {
+                "guardrailIdentifier": GUARDRAIL_ID,
+                "guardrailVersion": GUARDRAIL_VERSION
+            }
 
-        response = bedrock_runtime.invoke_model(**invoke_params)
+        response = bedrock_runtime.converse(**converse_args)
 
-        # Parse response
-        result = json.loads(response['body'].read())
+        content_blocks = response.get("output", {}).get("message", {}).get("content", [])
+        if not content_blocks or not content_blocks[0].get("text"):
+            raise ValueError("Empty or unexpected content returned from model")
 
-        # Check if guardrail blocked the request
-        if 'trace' in result and result.get('trace', {}).get('guardrail'):
-            guardrail_action = result['trace']['guardrail'].get('action')
-            if guardrail_action == 'GUARDRAIL_INTERVENED':
-                print(f"[BLOCKED] Guardrail blocked request")
-                return {
-                    "intent": "abusive_language",
-                    "confidence": 1.0,
-                    "slots": {
-                        "phone_number": None,
-                        "security_pin": None,
-                        "language_preference": "EN"
-                    },
-                    "reasoning": "Content blocked by safety guardrails"
-                }
-
-        content_text = result['content'][0]['text']
+        content_text = content_blocks[0].get("text", "")
 
         # Extract JSON from response (handle markdown code blocks if present)
-        # Use regex for more robust parsing
-        json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content_text, re.DOTALL)
+        json_match = re.search(r'```(?:json)?\\s*(\\{.*?\\})\\s*```', content_text, re.DOTALL)
         if json_match:
             content_text = json_match.group(1).strip()
         elif '```' in content_text:
-            # Fallback: split on backticks
             parts = content_text.split('```')
             if len(parts) >= 3:
                 content_text = parts[1].strip()

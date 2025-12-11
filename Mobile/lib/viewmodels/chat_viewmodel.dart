@@ -1,34 +1,3 @@
-// import 'package:flutter/material.dart';
-// import '../models/chat_message.dart';
-// import '../services/chat_service.dart';
-
-// class ChatViewModel extends ChangeNotifier {
-//   final ChatService _chatService = ChatService();
-
-//   List<ChatMessage> messages = [];
-//   bool isLoading = false;
-
-//   Future<void> sendMessage(String msg) async {
-//     messages.add(ChatMessage(message: msg, isUser: true));
-//     notifyListeners();
-
-//     isLoading = true;
-//     notifyListeners();
-
-//     try {
-//       String response = await _chatService.sendMessage(msg);
-
-//       messages.add(ChatMessage(message: response, isUser: false));
-//     } catch (e) {
-//       messages.add(ChatMessage(message: "Error: $e", isUser: false));
-//     }
-
-//     isLoading = false;
-//     notifyListeners();
-//   }
-// }
-
-
 import 'package:flutter/material.dart';
 
 import '../models/chat_message.dart';
@@ -40,6 +9,10 @@ class ChatViewModel extends ChangeNotifier {
   List<ChatMessage> messages = [];
   bool isLoading = false;
   String phoneNumber = "+60132211009";
+  
+  /// Session ID for maintaining conversation state across messages
+  /// Critical for multi-turn flows like PIN verification
+  String? _sessionId;
 
   // STATIC PLANS (since not coming from API)
   List<Map<String, String>> prepaidPlans = [
@@ -60,6 +33,13 @@ class ChatViewModel extends ChangeNotifier {
     },
   ];
 
+  /// Clear session to start a new conversation
+  void clearSession() {
+    _sessionId = null;
+    messages.clear();
+    notifyListeners();
+  }
+
   Future<void> sendMessage(String msg) async {
     messages.add(ChatMessage(message: msg, isUser: true));
     notifyListeners();
@@ -68,13 +48,22 @@ class ChatViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      String response =
-          await _chatService.sendMessage(msg, phoneNumber: phoneNumber);
+      // Pass session_id to continue the conversation
+      ChatResponse response = await _chatService.sendMessage(
+        msg,
+        phoneNumber: phoneNumber,
+        sessionId: _sessionId,
+      );
+
+      // Store session_id for follow-up messages (PIN verification, etc.)
+      if (response.sessionId != null) {
+        _sessionId = response.sessionId;
+      }
 
       // AUTO SHOW PLANS (not from API)
       messages.add(
         ChatMessage(
-          message: response,
+          message: response.message,
           isUser: false,
           cards: prepaidPlans,
         ),
