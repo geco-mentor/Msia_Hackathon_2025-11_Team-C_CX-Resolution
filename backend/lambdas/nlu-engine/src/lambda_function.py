@@ -366,6 +366,21 @@ def detect_intent_via_bedrock(message: str, normalized_message: str) -> Dict[str
 
         response = bedrock_runtime.converse(**converse_args)
 
+        # Check if guardrails intervened (abusive/inappropriate content blocked)
+        stop_reason = response.get("stopReason", "")
+        if stop_reason == "guardrail_intervened":
+            print(f"[GUARD] Guardrails INTERVENED - content blocked as inappropriate")
+            return {
+                "intent": "abusive_language",
+                "confidence": 1.0,
+                "slots": {
+                    "phone_number": None,
+                    "security_pin": None,
+                    "language_preference": "EN"
+                },
+                "reasoning": "Content blocked by Bedrock Guardrails - inappropriate or abusive language detected"
+            }
+
         content_blocks = response.get("output", {}).get("message", {}).get("content", [])
         if not content_blocks or not content_blocks[0].get("text"):
             raise ValueError("Empty or unexpected content returned from model")

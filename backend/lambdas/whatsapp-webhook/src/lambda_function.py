@@ -470,6 +470,7 @@ def handler(event, context):
                         'confidence': response_body.get('confidence')
                     },
                     'requires_followup': response_body.get('requires_followup', False),
+                    'escalate': response_body.get('escalate', False),
                     'timestamp': response_body.get('timestamp', datetime.utcnow().isoformat() + 'Z')
                 })
             }

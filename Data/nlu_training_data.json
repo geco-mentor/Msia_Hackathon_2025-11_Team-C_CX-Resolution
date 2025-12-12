@@ -1,0 +1,713 @@
+{
+  "intents": [
+    {
+      "intent_name": "deactivate_voicemail",
+      "examples_en": [
+        "turn off my voicemail",
+        "i want to disable voicemail",
+        "can you deactivate voicemail for me?",
+        "please switch off voicemail",
+        "turn off vm",
+        "disable vm please",
+        "deactivate my voice mail",
+        "switch off voice mail service",
+        "i dont want voicemail anymore",
+        "stop voicemail service",
+        "remove voicemail from my account",
+        "cancel voicemail",
+        "i want to turn voicemail off now",
+        "pls turn off voicemail",
+        "can u disable vm",
+        "need to deactivate vm asap",
+        "turn off the voicemail feature",
+        "i wanna stop using voicemail"
+      ],
+      "examples_bm": [
+        "matikan mel suara saya",
+        "saya nak nyahaktifkan mel suara",
+        "bolehkah anda nyahaktifkan mel suara untuk saya?",
+        "sila tutup mel suara",
+        "tutup mel suara",
+        "nak off mel suara",
+        "nyahaktifkan mel suara sy",
+        "minta matikan mel suara",
+        "saya tak nak mel suara lagi",
+        "berhenti perkhidmatan mel suara",
+        "buang mel suara dari akaun saya",
+        "batalkan mel suara",
+        "nak matikan mel suara sekarang",
+        "tolong matikan mel suara",
+        "boleh x matikan mel suara",
+        "kena tutup mel suara cepat"
+      ],
+      "examples_slang": [
+        "nk off vm plss",
+        "tolong deactivate mel suara sy",
+        "vm x jln, nak tutup",
+        "pls matikan mel suara saya",
+        "nk tutup vm skrg",
+        "nak off mel suara nie",
+        "hlp turn off vm",
+        "plz disable mel suara",
+        "nk matikan vm la",
+        "tlg off mel suara",
+        "nak deactivate vm boleh x",
+        "off kan vm sy",
+        "tutup vm sy cpt",
+        "vm annoyinggg nak off",
+        "plss matikn mel suara",
+        "nk remove vm service",
+        "disable vm skrg jgk",
+        "tlg tutup mel suara cepat",
+        "nak cancel vm service nie",
+        "off vm pls tq",
+        "off kan vm sy skrg2",
+        "matikn mel suara cpt",
+        "deactivatee vm pls",
+        "tutup vm boleh x",
+        "nk cancel vm nie",
+        "turn off vm nowww",
+        "sya nk off vm",
+        "boleh matikan vm x skrg",
+        "hi tutup vm",
+        "morning nak off voicemail",
+        "deactivte vm",
+        "vocimail off pls",
+        "voicmail tutup",
+        "mel suara x perlu dh",
+        "off mel suara asap",
+        "nk off vm urgent",
+        "tlg2 tutup vm",
+        "vm off skrg blh x",
+        "matikn vm cpt2",
+        "deactive vm sy"
+      ]
+    },
+    {
+      "intent_name": "query_voicemail_info",
+      "examples_en": [
+        "what is voicemail?",
+        "how does voicemail work?",
+        "tell me about voicemail service",
+        "explain voicemail to me",
+        "what does voicemail do?",
+        "how to use voicemail?",
+        "voicemail info please",
+        "i want to know about vm",
+        "whats vm service",
+        "how does vm work",
+        "tell me more about voicemail",
+        "what are the voicemail features?",
+        "voicemail details",
+        "explain voice mail"
+      ],
+      "examples_bm": [
+        "apa itu mel suara?",
+        "bagaimana mel suara berfungsi?",
+        "beritahu saya tentang perkhidmatan mel suara",
+        "terangkan mel suara kepada saya",
+        "mel suara buat apa?",
+        "macam mana nak guna mel suara?",
+        "maklumat mel suara",
+        "saya nak tahu tentang mel suara",
+        "apa itu perkhidmatan mel suara",
+        "mel suara ni macam mana",
+        "cerita lagi pasal mel suara",
+        "apa ciri mel suara?",
+        "butiran mel suara"
+      ],
+      "examples_slang": [
+        "vm tu ape",
+        "mcm mne vm keje",
+        "cite psl vm",
+        "terang vm utk sy",
+        "vm buat pe",
+        "mcm mne nk gune vm",
+        "info vm pls",
+        "nk tau psl vm",
+        "ape vm service nie",
+        "vm keje mcm mne",
+        "cite lg psl mel suara",
+        "vm ade ape feature",
+        "vm tu ape bende",
+        "mcm mne vm ni keje",
+        "explain vm",
+        "ape fungsi vm",
+        "mel suara cmne",
+        "vm utk ape",
+        "pasal vm",
+        "tlg explain mel suara",
+        "nk faham vm",
+        "vocimail tu ape",
+        "voicmail info"
+      ]
+    },
+    {
+      "intent_name": "activate_voicemail",
+      "examples_en": [
+        "activate voicemail",
+        "turn on voicemail",
+        "enable vm for me",
+        "i want to activate voicemail service",
+        "switch on voicemail",
+        "start voicemail service",
+        "how to activate voicemail?",
+        "please enable voicemail",
+        "turn voicemail on",
+        "can you activate vm",
+        "i need voicemail service",
+        "start vm please"
+      ],
+      "examples_bm": [
+        "aktifkan mel suara",
+        "hidupkan mel suara",
+        "buka mel suara untuk saya",
+        "saya nak aktifkan perkhidmatan mel suara",
+        "mulakan perkhidmatan mel suara",
+        "macam mana nak aktifkan mel suara?",
+        "tolong aktifkan mel suara",
+        "on kan mel suara",
+        "boleh aktifkan mel suara",
+        "saya perlukan perkhidmatan mel suara"
+      ],
+      "examples_slang": [
+        "nk on vm",
+        "aktifkn mel suara sy",
+        "mcm mne nk aktifkan vm",
+        "tlg on mel suara",
+        "nak vm service",
+        "on kan vm pls",
+        "nk hidupkan mel suara",
+        "enable vm boleh",
+        "mula vm service",
+        "on vm skrg",
+        "hidupkn vm cpt",
+        "activate vm pls",
+        "nk start vm",
+        "vm on blh x",
+        "tlg aktifkan mel suara sy"
+      ]
+    },
+    {
+      "intent_name": "query_voicemail_pricing",
+      "examples_en": [
+        "how much does voicemail cost?",
+        "what is the price for voicemail?",
+        "voicemail charges",
+        "is voicemail free?",
+        "vm pricing",
+        "what are the voicemail fees?",
+        "how much for vm service?",
+        "tell me the voicemail cost",
+        "price for voicemail",
+        "any charges for voicemail?"
+      ],
+      "examples_bm": [
+        "berapa harga mel suara?",
+        "apa harga untuk mel suara?",
+        "caj mel suara",
+        "mel suara percuma ke?",
+        "harga mel suara",
+        "apa bayaran mel suara?",
+        "berapa untuk perkhidmatan mel suara?",
+        "beritahu kos mel suara",
+        "ada caj untuk mel suara?"
+      ],
+      "examples_slang": [
+        "vm brape",
+        "hrga vm brape",
+        "vm free ke",
+        "caj vm brape",
+        "vm kene byar x",
+        "brape nk kene byar vm",
+        "vm ade caj x"
+      ]
+    },
+    {
+      "intent_name": "check_voicemail_messages",
+      "examples_en": [
+        "how to check voicemail?",
+        "check my voicemail",
+        "listen to voicemail messages",
+        "how do i access my voicemail?",
+        "i want to check vm",
+        "how to listen to vm?",
+        "access my voice messages",
+        "check voice messages",
+        "how to hear voicemail?",
+        "listen to my vm"
+      ],
+      "examples_bm": [
+        "macam mana nak semak mel suara?",
+        "semak mel suara saya",
+        "dengar mesej mel suara",
+        "macam mana nak akses mel suara?",
+        "saya nak semak mel suara",
+        "macam mana nak dengar mel suara?",
+        "akses mesej suara saya",
+        "semak mesej suara"
+      ],
+      "examples_slang": [
+        "mcm mne nk check vm",
+        "check vm sy",
+        "nk dgr vm",
+        "mcm mne access vm",
+        "nk semak mel suara",
+        "dgr mesej vm"
+      ]
+    },
+    {
+      "intent_name": "query_data_balance",
+      "examples_en": [
+        "check my data balance",
+        "how much data do i have left?",
+        "remaining data",
+        "data balance",
+        "check data usage",
+        "how much data left?",
+        "show my data balance",
+        "what's my data usage?",
+        "data quota left"
+      ],
+      "examples_bm": [
+        "semak baki data saya",
+        "berapa data saya tinggal?",
+        "data yang tinggal",
+        "baki data",
+        "semak penggunaan data",
+        "berapa data lagi?",
+        "tunjuk baki data saya",
+        "penggunaan data saya?",
+        "kuota data tinggal"
+      ],
+      "examples_slang": [
+        "check data sy",
+        "brape data lg",
+        "data tnggal brape",
+        "nk check data",
+        "data sy brape lg",
+        "blance data",
+        "data quota"
+      ]
+    },
+    {
+      "intent_name": "query_hotspot_usage",
+      "examples_en": [
+        "how to check hotspot usage?",
+        "hotspot data usage",
+        "how much data used for hotspot?",
+        "check my hotspot usage",
+        "hotspot usage details",
+        "show hotspot data consumption"
+      ],
+      "examples_bm": [
+        "macam mana nak semak penggunaan hotspot?",
+        "penggunaan data hotspot",
+        "berapa data digunakan untuk hotspot?",
+        "semak penggunaan hotspot saya",
+        "butiran penggunaan hotspot",
+        "tunjuk penggunaan data hotspot"
+      ],
+      "examples_slang": [
+        "mcm mne check hotspot",
+        "hotspot usage",
+        "brape data hotspot",
+        "check hotspot sy",
+        "nk tau hotspot usage"
+      ]
+    },
+    {
+      "intent_name": "query_plan_info",
+      "examples_en": [
+        "what is my current plan?",
+        "tell me about my plan",
+        "plan details",
+        "my subscription info",
+        "what plan am i on?",
+        "show my plan details",
+        "current plan information"
+      ],
+      "examples_bm": [
+        "apa pelan semasa saya?",
+        "beritahu tentang pelan saya",
+        "butiran pelan",
+        "maklumat langganan saya",
+        "saya guna pelan apa?",
+        "tunjuk butiran pelan saya",
+        "maklumat pelan semasa"
+      ],
+      "examples_slang": [
+        "plan sy ape",
+        "nk tau plan sy",
+        "sy gune plan ape",
+        "plan info",
+        "current plan"
+      ]
+    },
+    {
+      "intent_name": "query_billing",
+      "examples_en": [
+        "what is my bill amount?",
+        "check my bill",
+        "how much do i owe?",
+        "billing details",
+        "show my bill",
+        "current bill amount",
+        "outstanding payment"
+      ],
+      "examples_bm": [
+        "berapa jumlah bil saya?",
+        "semak bil saya",
+        "berapa hutang saya?",
+        "butiran bil",
+        "tunjuk bil saya",
+        "jumlah bil semasa",
+        "bayaran tertunggak"
+      ],
+      "examples_slang": [
+        "bil sy brape",
+        "check bil",
+        "hutang brape",
+        "nk tau bil",
+        "bil amount"
+      ]
+    },
+    {
+      "intent_name": "activate_roaming",
+      "examples_en": [
+        "activate international roaming",
+        "turn on roaming",
+        "enable roaming service",
+        "i need roaming",
+        "activate roaming please",
+        "switch on international roaming"
+      ],
+      "examples_bm": [
+        "aktifkan perayauan antarabangsa",
+        "hidupkan perayauan",
+        "aktifkan perkhidmatan perayauan",
+        "saya perlukan perayauan",
+        "tolong aktifkan perayauan",
+        "buka perayauan antarabangsa"
+      ],
+      "examples_slang": [
+        "nk on roaming",
+        "aktifkan roaming",
+        "on roaming pls",
+        "nk roaming service",
+        "enable roaming"
+      ]
+    },
+    {
+      "intent_name": "query_roaming_info",
+      "examples_en": [
+        "roaming charges",
+        "how much is roaming?",
+        "roaming rates",
+        "international roaming info",
+        "tell me about roaming",
+        "roaming pricing"
+      ],
+      "examples_bm": [
+        "caj perayauan",
+        "berapa harga perayauan?",
+        "kadar perayauan",
+        "maklumat perayauan antarabangsa",
+        "beritahu tentang perayauan",
+        "harga perayauan"
+      ],
+      "examples_slang": [
+        "roaming brape",
+        "caj roaming",
+        "roaming rate",
+        "info roaming",
+        "hrga roaming"
+      ]
+    },
+    {
+      "intent_name": "reset_security_pin",
+      "examples_en": [
+        "forgot my PIN",
+        "reset security PIN",
+        "i forgot my security code",
+        "how to reset PIN?",
+        "lost my PIN",
+        "change security PIN",
+        "need to reset my PIN"
+      ],
+      "examples_bm": [
+        "terlupa PIN saya",
+        "tetap semula PIN keselamatan",
+        "saya terlupa kod keselamatan",
+        "macam mana nak tetap semula PIN?",
+        "hilang PIN saya",
+        "tukar PIN keselamatan",
+        "perlu tetap semula PIN"
+      ],
+      "examples_slang": [
+        "lupe PIN",
+        "reset PIN",
+        "trlupa PIN sy",
+        "mcm mne reset PIN",
+        "PIN ilang",
+        "nk tukar PIN"
+      ]
+    },
+    {
+      "intent_name": "technical_support",
+      "examples_en": [
+        "network not working",
+        "no signal",
+        "internet slow",
+        "cannot connect to network",
+        "technical issue",
+        "phone not working",
+        "network problem"
+      ],
+      "examples_bm": [
+        "rangkaian tidak berfungsi",
+        "tiada signal",
+        "internet perlahan",
+        "tidak dapat sambung ke rangkaian",
+        "masalah teknikal",
+        "telefon tidak berfungsi",
+        "masalah rangkaian"
+      ],
+      "examples_slang": [
+        "network x jln",
+        "xde signal",
+        "internet slow gile",
+        "x boleh connect",
+        "technical problem",
+        "phone rosak",
+        "network down"
+      ]
+    },
+    {
+      "intent_name": "escalate_to_agent",
+      "examples_en": [
+        "talk to a human",
+        "speak to agent",
+        "i want to talk to customer service",
+        "connect me to agent",
+        "need human help",
+        "customer service please",
+        "speak to representative"
+      ],
+      "examples_bm": [
+        "bercakap dengan manusia",
+        "bercakap dengan ejen",
+        "saya nak bercakap dengan perkhidmatan pelanggan",
+        "sambungkan saya kepada ejen",
+        "perlukan bantuan manusia",
+        "perkhidmatan pelanggan",
+        "bercakap dengan wakil"
+      ],
+      "examples_slang": [
+        "nk ckp dgn human",
+        "tlg connect agent",
+        "nk ckp dgn org",
+        "customer service pls",
+        "nk bantuan real person"
+      ]
+    },
+    {
+      "intent_name": "out_of_scope",
+      "examples_en": [
+        "what's the weather today?",
+        "tell me a joke",
+        "who won the election?",
+        "what time is it?",
+        "where can i buy pizza?",
+        "how old are you?",
+        "what's your name?"
+      ],
+      "examples_bm": [
+        "cuaca hari ini macam mana?",
+        "cerita jenaka",
+        "siapa menang pilihan raya?",
+        "pukul berapa sekarang?",
+        "mana boleh beli pizza?",
+        "berapa umur anda?",
+        "siapa nama anda?"
+      ],
+      "examples_slang": [
+        "cuaca cmne",
+        "cite joke",
+        "sape menang",
+        "skrg pkul brape",
+        "nk beli pizza mne"
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "entity_name": "phone_number",
+      "examples_en": [
+        "my number is {+60123456789|phone_number}",
+        "phone number {+60198765432|phone_number}",
+        "the number is {+60112233445|phone_number}",
+        "{0123456789|phone_number}",
+        "{60123456789|phone_number}"
+      ],
+      "examples_bm": [
+        "nombor saya {+60123456789|phone_number}",
+        "nombor telefon {+60198765432|phone_number}",
+        "nombornya {+60112233445|phone_number}",
+        "{0123456789|phone_number}",
+        "{60123456789|phone_number}"
+      ],
+      "examples_slang": [
+        "no sy {+60123456789|phone_number}",
+        "nombor {0123456789|phone_number}",
+        "no {60198765432|phone_number}"
+      ]
+    },
+    {
+      "entity_name": "security_pin",
+      "examples_en": [
+        "my PIN is {1234|security_pin}",
+        "the PIN is {5678|security_pin}",
+        "security code {9876|security_pin}",
+        "PIN: {4321|security_pin}"
+      ],
+      "examples_bm": [
+        "PIN saya {1234|security_pin}",
+        "PINnya {5678|security_pin}",
+        "kod keselamatan {9876|security_pin}",
+        "PIN: {4321|security_pin}"
+      ],
+      "examples_slang": [
+        "PIN sy {1234|security_pin}",
+        "pin {5678|security_pin}",
+        "code {9876|security_pin}"
+      ]
+    },
+    {
+      "entity_name": "language_preference",
+      "examples_en": [
+        "i prefer {english|language_preference}",
+        "speak in {english|language_preference}",
+        "{EN|language_preference} please",
+        "use {bahasa malaysia|language_preference}",
+        "{BM|language_preference} please",
+        "{malay|language_preference}"
+      ],
+      "examples_bm": [
+        "saya lebih suka {bahasa malaysia|language_preference}",
+        "bercakap dalam {bahasa malaysia|language_preference}",
+        "{BM|language_preference} tolong",
+        "guna {bahasa inggeris|language_preference}",
+        "{EN|language_preference} tolong"
+      ],
+      "examples_slang": [
+        "{english|language_preference} pls",
+        "{BM|language_preference} je",
+        "prefer {malay|language_preference}"
+      ]
+    },
+    {
+      "entity_name": "confirmation",
+      "examples_en": [
+        "{yes|confirmation}",
+        "{yeah|confirmation}",
+        "{yup|confirmation}",
+        "{ok|confirmation}",
+        "{sure|confirmation}",
+        "{confirm|confirmation}",
+        "{proceed|confirmation}",
+        "{no|confirmation}",
+        "{nope|confirmation}",
+        "{cancel|confirmation}"
+      ],
+      "examples_bm": [
+        "{ya|confirmation}",
+        "{ok|confirmation}",
+        "{setuju|confirmation}",
+        "{teruskan|confirmation}",
+        "{tidak|confirmation}",
+        "{batal|confirmation}"
+      ],
+      "examples_slang": [
+        "{yup|confirmation}",
+        "{ok je|confirmation}",
+        "{x|confirmation}",
+        "{xnak|confirmation}",
+        "{jd|confirmation}",
+        "{x jd|confirmation}"
+      ]
+    }
+  ],
+  "slang_patterns": {
+    "common_abbreviations": {
+      "nk": "nak (want)",
+      "sy": "saya (me/my)",
+      "sya": "saya (me/my)",
+      "x": "tak (no/not)",
+      "tlg": "tolong (please)",
+      "tlg2": "tolong (please - emphasized)",
+      "pls": "please",
+      "plss": "please",
+      "plz": "please",
+      "vm": "voicemail",
+      "mcm mne": "macam mana (how)",
+      "cmne": "macam mana (how)",
+      "brape": "berapa (how much)",
+      "brp": "berapa (how much)",
+      "skrg": "sekarang (now)",
+      "skrg2": "sekarang (now - emphasized)",
+      "jgk": "juga (also)",
+      "dgn": "dengan (with)",
+      "utk": "untuk (for)",
+      "nie": "ini (this)",
+      "ni": "ini (this)",
+      "ape": "apa (what)",
+      "pe": "apa (what)",
+      "lg": "lagi (more/again)",
+      "cpt": "cepat (fast)",
+      "cpt2": "cepat (fast - emphasized)",
+      "tnggal": "tinggal (remain)",
+      "trlupa": "terlupa (forgot)",
+      "hlp": "help",
+      "thx": "thanks",
+      "tq": "thank you",
+      "tq2": "thank you",
+      "u": "you",
+      "dh": "dah/sudah (already)",
+      "xpe": "tak apa (never mind)",
+      "jap": "sekejap (wait)",
+      "blh": "boleh (can)",
+      "k": "ok"
+    },
+    "omitted_vowels": {
+      "keje": "kerja (work)",
+      "cite": "cerita (tell/story)",
+      "dgr": "dengar (listen)",
+      "blance": "balance",
+      "hrga": "harga (price)",
+      "terang": "terangkan (explain)",
+      "matikn": "matikan (turn off)",
+      "hidupkn": "hidupkan (turn on)",
+      "aktifkn": "aktifkan (activate)"
+    },
+    "repeated_letters": {
+      "plsss": "please",
+      "plssss": "please",
+      "helppp": "help",
+      "nowww": "now",
+      "fastt": "fast",
+      "slowww": "slow",
+      "annoyinggg": "annoying",
+      "urgenttt": "urgent"
+    },
+    "common_typos": {
+      "deactivte": "deactivate",
+      "deactivtae": "deactivate",
+      "vocimail": "voicemail",
+      "voicmail": "voicemail",
+      "voicemial": "voicemail",
+      "deactive": "deactivate",
+      "activte": "activate"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/chat_message.dart';
 import '../services/chat_service.dart';
@@ -8,7 +9,7 @@ class ChatViewModel extends ChangeNotifier {
 
   List<ChatMessage> messages = [];
   bool isLoading = false;
-  String phoneNumber = "+60132211009";
+  String phoneNumber = dotenv.env['PHONE_NUMBER'] ?? "";
   
   /// Session ID for maintaining conversation state across messages
   /// Critical for multi-turn flows like PIN verification
