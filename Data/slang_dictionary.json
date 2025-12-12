@@ -1,0 +1,368 @@
+{
+  "version": "1.0",
+  "description": "Malaysian slang, abbreviations, and code-mixing patterns for multilingual NLU",
+  "last_updated": "2024-12-10",
+  "categories": {
+    "common_abbreviations": {
+      "description": "Frequently used abbreviations in Malaysian text messages",
+      "entries": [
+        {"slang": "nk", "standard": "nak", "english": "want", "type": "abbreviation"},
+        {"slang": "sy", "standard": "saya", "english": "me/my/I", "type": "abbreviation"},
+        {"slang": "sya", "standard": "saya", "english": "me/my/I", "type": "abbreviation"},
+        {"slang": "x", "standard": "tak", "english": "no/not", "type": "abbreviation"},
+        {"slang": "xpe", "standard": "tak apa", "english": "never mind", "type": "abbreviation"},
+        {"slang": "tlg", "standard": "tolong", "english": "please/help", "type": "abbreviation"},
+        {"slang": "tlg2", "standard": "tolong", "english": "please (emphasized)", "type": "abbreviation"},
+        {"slang": "pls", "standard": "please", "english": "please", "type": "abbreviation"},
+        {"slang": "plss", "standard": "please", "english": "please", "type": "abbreviation"},
+        {"slang": "plsss", "standard": "please", "english": "please", "type": "abbreviation"},
+        {"slang": "plz", "standard": "please", "english": "please", "type": "abbreviation"},
+        {"slang": "vm", "standard": "voicemail", "english": "voicemail", "type": "abbreviation"},
+        {"slang": "mcm mne", "standard": "macam mana", "english": "how", "type": "phrase"},
+        {"slang": "cmne", "standard": "macam mana", "english": "how", "type": "abbreviation"},
+        {"slang": "brp", "standard": "berapa", "english": "how much/how many", "type": "abbreviation"},
+        {"slang": "brape", "standard": "berapa", "english": "how much/how many", "type": "abbreviation"},
+        {"slang": "kos", "standard": "cost", "english": "cost", "type": "abbreviation"},
+        {"slang": "skrg", "standard": "sekarang", "english": "now", "type": "abbreviation"},
+        {"slang": "skrg2", "standard": "sekarang", "english": "now (emphasized)", "type": "abbreviation"},
+        {"slang": "jgk", "standard": "juga", "english": "also/too", "type": "abbreviation"},
+        {"slang": "dgn", "standard": "dengan", "english": "with", "type": "abbreviation"},
+        {"slang": "utk", "standard": "untuk", "english": "for", "type": "abbreviation"},
+        {"slang": "nie", "standard": "ini", "english": "this", "type": "abbreviation"},
+        {"slang": "ni", "standard": "ini", "english": "this", "type": "abbreviation"},
+        {"slang": "tu", "standard": "itu", "english": "that", "type": "abbreviation"},
+        {"slang": "ape", "standard": "apa", "english": "what", "type": "abbreviation"},
+        {"slang": "pe", "standard": "apa", "english": "what", "type": "abbreviation"},
+        {"slang": "lg", "standard": "lagi", "english": "more/again", "type": "abbreviation"},
+        {"slang": "cpt", "standard": "cepat", "english": "fast/quick", "type": "abbreviation"},
+        {"slang": "cpt2", "standard": "cepat", "english": "fast (emphasized)", "type": "abbreviation"},
+        {"slang": "tnggal", "standard": "tinggal", "english": "remain/left", "type": "abbreviation"},
+        {"slang": "trlupa", "standard": "terlupa", "english": "forgot", "type": "abbreviation"},
+        {"slang": "hlp", "standard": "help", "english": "help", "type": "abbreviation"},
+        {"slang": "thx", "standard": "thanks", "english": "thanks", "type": "abbreviation"},
+        {"slang": "tq", "standard": "thank you", "english": "thank you", "type": "abbreviation"},
+        {"slang": "tq2", "standard": "thank you", "english": "thank you (emphasized)", "type": "abbreviation"},
+        {"slang": "u", "standard": "you", "english": "you", "type": "abbreviation"},
+        {"slang": "r", "standard": "are", "english": "are", "type": "abbreviation"},
+        {"slang": "y", "standard": "why", "english": "why", "type": "abbreviation"},
+        {"slang": "no", "standard": "nombor", "english": "number", "type": "abbreviation"},
+        {"slang": "n", "standard": "and", "english": "and", "type": "abbreviation"},
+        {"slang": "dh", "standard": "dah/sudah", "english": "already", "type": "abbreviation"},
+        {"slang": "jap", "standard": "sekejap", "english": "wait/moment", "type": "abbreviation"},
+        {"slang": "k", "standard": "ok", "english": "ok", "type": "abbreviation"},
+        {"slang": "noted", "standard": "noted", "english": "understood", "type": "whatsapp"},
+        {"slang": "done", "standard": "done", "english": "completed", "type": "whatsapp"},
+        {"slang": "roger", "standard": "roger", "english": "understood", "type": "whatsapp"},
+        {"slang": "asap", "standard": "as soon as possible", "english": "immediately", "type": "abbreviation"}
+      ]
+    },
+    "omitted_vowels": {
+      "description": "Words with vowels omitted (common in SMS)",
+      "entries": [
+        {"slang": "keje", "standard": "kerja", "english": "work", "type": "vowel_omission"},
+        {"slang": "cite", "standard": "cerita", "english": "tell/story", "type": "vowel_omission"},
+        {"slang": "dgr", "standard": "dengar", "english": "listen", "type": "vowel_omission"},
+        {"slang": "blance", "standard": "balance", "english": "balance", "type": "vowel_omission"},
+        {"slang": "hrga", "standard": "harga", "english": "price", "type": "vowel_omission"},
+        {"slang": "terang", "standard": "terangkan", "english": "explain", "type": "vowel_omission"},
+        {"slang": "byk", "standard": "banyak", "english": "many/much", "type": "vowel_omission"},
+        {"slang": "blh", "standard": "boleh", "english": "can", "type": "vowel_omission"},
+        {"slang": "dpt", "standard": "dapat", "english": "can/get", "type": "vowel_omission"},
+        {"slang": "spt", "standard": "seperti", "english": "like/as", "type": "vowel_omission"},
+        {"slang": "matikn", "standard": "matikan", "english": "turn off", "type": "vowel_omission"},
+        {"slang": "hidupkn", "standard": "hidupkan", "english": "turn on", "type": "vowel_omission"},
+        {"slang": "aktifkn", "standard": "aktifkan", "english": "activate", "type": "vowel_omission"},
+        {"slang": "smak", "standard": "semak", "english": "check", "type": "vowel_omission"},
+        {"slang": "ckp", "standard": "cakap", "english": "speak/talk", "type": "vowel_omission"},
+        {"slang": "psl", "standard": "pasal", "english": "about", "type": "vowel_omission"}
+      ]
+    },
+    "repeated_letters": {
+      "description": "Words with repeated letters for emphasis",
+      "entries": [
+        {"slang": "plssss", "standard": "please", "english": "please", "emphasis": "high"},
+        {"slang": "helppp", "standard": "help", "english": "help", "emphasis": "high"},
+        {"slang": "nowww", "standard": "now", "english": "now", "emphasis": "high"},
+        {"slang": "fastt", "standard": "fast", "english": "fast", "emphasis": "medium"},
+        {"slang": "slowww", "standard": "slow", "english": "slow", "emphasis": "high"},
+        {"slang": "annoyinggg", "standard": "annoying", "english": "annoying", "emphasis": "high"},
+        {"slang": "yesss", "standard": "yes", "english": "yes", "emphasis": "high"},
+        {"slang": "noooo", "standard": "no", "english": "no", "emphasis": "high"},
+        {"slang": "okkkk", "standard": "ok", "english": "ok", "emphasis": "high"}
+      ]
+    },
+    "phonetic_spellings": {
+      "description": "Words spelled phonetically",
+      "entries": [
+        {"slang": "wat", "standard": "what", "english": "what", "type": "phonetic"},
+        {"slang": "wif", "standard": "with", "english": "with", "type": "phonetic"},
+        {"slang": "dat", "standard": "that", "english": "that", "type": "phonetic"},
+        {"slang": "dis", "standard": "this", "english": "this", "type": "phonetic"},
+        {"slang": "ur", "standard": "your", "english": "your", "type": "phonetic"},
+        {"slang": "coz", "standard": "because", "english": "because", "type": "phonetic"},
+        {"slang": "wanna", "standard": "want to", "english": "want to", "type": "phonetic"},
+        {"slang": "gonna", "standard": "going to", "english": "going to", "type": "phonetic"},
+        {"slang": "gotta", "standard": "got to", "english": "got to", "type": "phonetic"},
+        {"slang": "fon", "standard": "phone", "english": "phone", "type": "phonetic"},
+        {"slang": "akaun", "standard": "account", "english": "account", "type": "phonetic"},
+        {"slang": "servis", "standard": "service", "english": "service", "type": "phonetic"},
+        {"slang": "mesej", "standard": "message", "english": "message", "type": "phonetic"},
+        {"slang": "nombor", "standard": "number", "english": "number", "type": "phonetic"}
+      ]
+    },
+    "common_typos": {
+      "description": "Common typos and misspellings",
+      "entries": [
+        {"slang": "vocimail", "standard": "voicemail", "english": "voicemail", "type": "typo"},
+        {"slang": "voicmail", "standard": "voicemail", "english": "voicemail", "type": "typo"},
+        {"slang": "voicemial", "standard": "voicemail", "english": "voicemail", "type": "typo"},
+        {"slang": "voicemaill", "standard": "voicemail", "english": "voicemail", "type": "typo"},
+        {"slang": "deactivte", "standard": "deactivate", "english": "deactivate", "type": "typo"},
+        {"slang": "deactivtae", "standard": "deactivate", "english": "deactivate", "type": "typo"},
+        {"slang": "deactive", "standard": "deactivate", "english": "deactivate", "type": "typo"},
+        {"slang": "deactiavte", "standard": "deactivate", "english": "deactivate", "type": "typo"},
+        {"slang": "activte", "standard": "activate", "english": "activate", "type": "typo"},
+        {"slang": "actiavte", "standard": "activate", "english": "activate", "type": "typo"},
+        {"slang": "dissable", "standard": "disable", "english": "disable", "type": "typo"},
+        {"slang": "enalbe", "standard": "enable", "english": "enable", "type": "typo"}
+      ]
+    },
+    "action_verbs": {
+      "description": "Common action verbs in various forms",
+      "entries": [
+        {
+          "action": "deactivate",
+          "variations": {
+            "english": ["turn off", "switch off", "disable", "deactivate", "stop", "cancel", "remove", "off"],
+            "bahasa": ["matikan", "tutup", "nyahaktifkan", "berhenti", "batalkan", "buang"],
+            "slang": ["off", "off kan", "tutup", "matikn", "cancel"]
+          }
+        },
+        {
+          "action": "activate",
+          "variations": {
+            "english": ["turn on", "switch on", "enable", "activate", "start", "open"],
+            "bahasa": ["hidupkan", "buka", "aktifkan", "mulakan"],
+            "slang": ["on", "on kan", "buka", "aktifkn", "start"]
+          }
+        },
+        {
+          "action": "check",
+          "variations": {
+            "english": ["check", "view", "see", "look", "show", "display"],
+            "bahasa": ["semak", "lihat", "tunjuk", "papar"],
+            "slang": ["check", "tgk", "tunjuk"]
+          }
+        },
+        {
+          "action": "want",
+          "variations": {
+            "english": ["want", "need", "require", "would like"],
+            "bahasa": ["nak", "mahu", "perlukan", "ingin"],
+            "slang": ["nk", "nak", "want"]
+          }
+        }
+      ]
+    },
+    "service_terms": {
+      "description": "Service-related terminology",
+      "entries": [
+        {
+          "term": "voicemail",
+          "variations": {
+            "english": ["voicemail", "voice mail", "vm"],
+            "bahasa": ["mel suara", "mesej suara"],
+            "slang": ["vm", "mel suara"]
+          }
+        },
+        {
+          "term": "data",
+          "variations": {
+            "english": ["data", "internet", "mobile data"],
+            "bahasa": ["data", "internet", "data mudah alih"],
+            "slang": ["data", "internet"]
+          }
+        },
+        {
+          "term": "bill",
+          "variations": {
+            "english": ["bill", "payment", "charge", "invoice"],
+            "bahasa": ["bil", "bayaran", "caj", "invois"],
+            "slang": ["bil", "bill", "bayar"]
+          }
+        },
+        {
+          "term": "hotspot",
+          "variations": {
+            "english": ["hotspot", "tethering", "sharing"],
+            "bahasa": ["hotspot", "perkongsian"],
+            "slang": ["hotspot"]
+          }
+        },
+        {
+          "term": "roaming",
+          "variations": {
+            "english": ["roaming", "international roaming"],
+            "bahasa": ["perayauan", "perayauan antarabangsa"],
+            "slang": ["roaming"]
+          }
+        },
+        {
+          "term": "plan",
+          "variations": {
+            "english": ["plan", "package", "subscription"],
+            "bahasa": ["pelan", "pakej", "langganan"],
+            "slang": ["plan", "package"]
+          }
+        }
+      ]
+    },
+    "sentiment_indicators": {
+      "description": "Words and phrases indicating sentiment",
+      "entries": [
+        {"phrase": "annoying", "sentiment": "negative", "intensity": "medium"},
+        {"phrase": "annoyinggg", "sentiment": "negative", "intensity": "high"},
+        {"phrase": "frustrated", "sentiment": "negative", "intensity": "high"},
+        {"phrase": "not working", "sentiment": "negative", "intensity": "medium"},
+        {"phrase": "x jln", "sentiment": "negative", "intensity": "medium"},
+        {"phrase": "slow", "sentiment": "negative", "intensity": "low"},
+        {"phrase": "slowww", "sentiment": "negative", "intensity": "high"},
+        {"phrase": "thanks", "sentiment": "positive", "intensity": "medium"},
+        {"phrase": "thank you", "sentiment": "positive", "intensity": "medium"},
+        {"phrase": "terima kasih", "sentiment": "positive", "intensity": "medium"},
+        {"phrase": "great", "sentiment": "positive", "intensity": "medium"},
+        {"phrase": "good", "sentiment": "positive", "intensity": "low"}
+      ]
+    },
+    "code_mixing_patterns": {
+      "description": "Common English-Bahasa Malaysia code-mixing patterns",
+      "examples": [
+        {
+          "mixed": "nk off vm plss",
+          "explanation": "BM slang 'nk' (nak/want) + EN 'off' + EN abbr 'vm' + EN slang 'plss'",
+          "intent": "deactivate_voicemail",
+          "language_split": {"bahasa": 40, "english": 60}
+        },
+        {
+          "mixed": "tolong deactivate mel suara sy",
+          "explanation": "BM 'tolong' (please) + EN 'deactivate' + BM 'mel suara' + BM abbr 'sy'",
+          "intent": "deactivate_voicemail",
+          "language_split": {"bahasa": 60, "english": 40}
+        },
+        {
+          "mixed": "vm x jln, nak tutup",
+          "explanation": "EN 'vm' + BM slang 'x jln' (not working) + BM 'nak tutup' (want to close)",
+          "intent": "deactivate_voicemail",
+          "language_split": {"bahasa": 70, "english": 30}
+        },
+        {
+          "mixed": "pls matikan mel suara saya",
+          "explanation": "EN 'pls' (please) + BM 'matikan mel suara saya' (turn off my voicemail)",
+          "intent": "deactivate_voicemail",
+          "language_split": {"bahasa": 75, "english": 25}
+        },
+        {
+          "mixed": "check data sy brape lg",
+          "explanation": "EN 'check' + BM 'data' + BM abbr 'sy' + BM 'brape lg' (how much left)",
+          "intent": "query_data_balance",
+          "language_split": {"bahasa": 60, "english": 40}
+        },
+        {
+          "mixed": "mcm mne nk activate roaming",
+          "explanation": "BM 'mcm mne' (how) + BM 'nk' (want) + EN 'activate roaming'",
+          "intent": "activate_roaming",
+          "language_split": {"bahasa": 50, "english": 50}
+        }
+      ]
+    },
+    "question_words": {
+      "description": "Common question words in various languages",
+      "entries": [
+        {
+          "english": ["what", "how", "why", "when", "where", "who", "which"],
+          "bahasa": ["apa", "macam mana", "mengapa", "bila", "mana", "siapa", "yang mana"],
+          "slang": ["ape", "mcm mne", "nape", "bile", "mne", "sape"]
+        }
+      ]
+    },
+    "confirmation_words": {
+      "description": "Words used for confirmation or rejection",
+      "entries": [
+        {
+          "type": "positive",
+          "english": ["yes", "yeah", "yup", "ok", "sure", "confirm", "proceed", "go ahead"],
+          "bahasa": ["ya", "ok", "baik", "setuju", "teruskan", "pasti"],
+          "slang": ["yup", "ok je", "jd", "proceed"]
+        },
+        {
+          "type": "negative",
+          "english": ["no", "nope", "cancel", "stop", "don't", "not"],
+          "bahasa": ["tidak", "tak", "batal", "jangan"],
+          "slang": ["x", "xnak", "x jd", "cancel"]
+        }
+      ]
+    },
+    "politeness_markers": {
+      "description": "Polite words and phrases",
+      "entries": [
+        {
+          "type": "request",
+          "english": ["please", "kindly", "could you", "can you"],
+          "bahasa": ["tolong", "sila", "bolehkah", "minta"],
+          "slang": ["pls", "plss", "tlg", "boleh x"]
+        },
+        {
+          "type": "gratitude",
+          "english": ["thank you", "thanks", "appreciate it"],
+          "bahasa": ["terima kasih", "terima kasih banyak"],
+          "slang": ["tq", "thx", "thanks"]
+        }
+      ]
+    },
+    "urgency_indicators": {
+      "description": "Words indicating urgency or immediacy",
+      "entries": [
+        {"slang": "asap", "standard": "as soon as possible", "urgency": "high"},
+        {"slang": "skrg", "standard": "sekarang", "english": "now", "urgency": "high"},
+        {"slang": "skrg jgk", "standard": "sekarang juga", "english": "right now", "urgency": "very_high"},
+        {"slang": "cpt", "standard": "cepat", "english": "fast/quick", "urgency": "high"},
+        {"slang": "urgent", "standard": "urgent", "english": "urgent", "urgency": "high"},
+        {"slang": "emergency", "standard": "emergency", "english": "emergency", "urgency": "very_high"}
+      ]
+    }
+  },
+  "normalization_rules": [
+    {
+      "rule": "Remove repeated letters",
+      "example": "plssss -> pls",
+      "pattern": "([a-z])\\1{2,}",
+      "replacement": "$1"
+    },
+    {
+      "rule": "Expand common abbreviations",
+      "example": "nk -> nak",
+      "applies_to": "common_abbreviations"
+    },
+    {
+      "rule": "Handle mixed case variations",
+      "example": "PlS -> pls",
+      "pattern": "case_insensitive_matching"
+    },
+    {
+      "rule": "Normalize phone numbers",
+      "example": "0123456789 -> +60123456789",
+      "pattern": "^0(\\d{9,10})$",
+      "replacement": "+60$1"
+    }
+  ],
+  "usage_notes": [
+    "Malaysian users frequently code-mix English and Bahasa Malaysia in the same sentence",
+    "Slang and abbreviations are very common in WhatsApp and chat messages",
+    "Repeated letters indicate emphasis or urgency",
+    "Context is crucial for disambiguating abbreviated words (e.g., 'x' can mean 'no', 'not', or 'times')",
+    "Numbers in Malay can be written using digits or words: '2' or 'dua'",
+    "Vowel omission is common in informal text to save time/space",
+    "English technical terms (vm, data, roaming) are often used even in Bahasa sentences",
+    "Question marks are often omitted in informal messages"
+  ]
+}
