@@ -955,10 +955,18 @@ def handle_intent(intent: str, slots: Dict[str, Any], session_data: Dict[str, An
         }
 
     elif intent in ["escalate_to_agent", "out_of_scope"]:
+        # Direct escalation without PIN verification - user explicitly requested human agent
+        escalation_response = (
+            "I understand you'd like to speak with a human agent. "
+            "I'm connecting you to our customer service team now. "
+            "Please hold while I transfer your conversation. Thank you for your patience!"
+            if language == "EN" else
+            "Saya faham anda ingin bercakap dengan ejen manusia. "
+            "Saya sedang menghubungkan anda dengan pasukan khidmat pelanggan kami sekarang. "
+            "Sila tunggu sementara saya memindahkan perbualan anda. Terima kasih atas kesabaran anda!"
+        )
         return {
-            "response": generate_response(intent, {
-                "message": "Escalation needed"
-            }, language),
+            "response": escalation_response,
             "grounded": False,
             "citations": [],
             "requires_followup": False,
@@ -966,9 +974,18 @@ def handle_intent(intent: str, slots: Dict[str, Any], session_data: Dict[str, An
         }
 
     elif intent == "abusive_language":
-        # Caught by Bedrock Guardrails in NLU
+        # Caught by Bedrock Guardrails in NLU - inappropriate or complex content
+        escalation_msg = (
+            "I'm not able to assist with this type of request. "
+            "Let me transfer you to a human agent who can help you better. "
+            "Please hold on shortly while I connect you."
+            if language == "EN" else
+            "Saya tidak dapat membantu dengan permintaan seperti ini. "
+            "Izinkan saya memindahkan anda kepada ejen manusia yang boleh membantu anda dengan lebih baik. "
+            "Sila tunggu sebentar sementara saya menghubungkan anda."
+        )
         return {
-            "response": "This conversation has been flagged and will be escalated to a supervisor.",
+            "response": escalation_msg,
             "grounded": False,
             "citations": [],
             "requires_followup": False,
